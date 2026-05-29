@@ -292,58 +292,56 @@ def get_tarot_reading(card, concern):
     return card["name"], direction, meaning, response.choices[0].message.content
 
 # =============================================
-# 🔮 수정구슬 버튼 (우측 하단 고정)
+# 🔮 타로카드 버튼/카드 스타일
 # =============================================
 st.markdown("""
 <style>
-    .tarot-btn {
-        position: fixed;
-        bottom: 90px;
-        right: 20px;
-        width: 65px;
-        height: 65px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 35% 35%, #ff99ff, #6633cc, #001133);
-        box-shadow: 0 0 15px rgba(180,100,255,0.7), 0 0 30px rgba(180,100,255,0.4);
-        cursor: pointer;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        animation: orbPulse 3s ease-in-out infinite;
-        border: 2px solid rgba(200,150,255,0.5);
+    /* 사이드바 완전히 숨기기 */
+    [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {
+        display: none !important;
     }
-    @keyframes orbPulse {
-        0%   { box-shadow: 0 0 15px rgba(180,100,255,0.7), 0 0 30px rgba(180,100,255,0.4); }
-        50%  { box-shadow: 0 0 25px rgba(220,150,255,1.0), 0 0 50px rgba(180,100,255,0.6), 0 0 80px rgba(150,80,255,0.3); }
-        100% { box-shadow: 0 0 15px rgba(180,100,255,0.7), 0 0 30px rgba(180,100,255,0.4); }
+
+    /* 타로카드 뒷면 버튼 스타일 */
+    [data-testid="stExpander"] .stButton > button {
+        height: 90px !important;
+        border-radius: 12px !important;
+        border: none !important;
+        background: linear-gradient(160deg, #3a1d6e 0%, #6633cc 45%, #1a0b3d 100%) !important;
+        box-shadow: 0 0 10px rgba(150,90,255,0.5), inset 0 0 12px rgba(200,150,255,0.25) !important;
+        font-size: 1.7rem !important;
+        color: #e8d0ff !important;
+        transition: transform 0.15s ease, box-shadow 0.2s ease !important;
+    }
+    [data-testid="stExpander"] .stButton > button:hover {
+        transform: translateY(-6px) scale(1.04) !important;
+        box-shadow: 0 0 20px rgba(200,150,255,0.9), 0 8px 20px rgba(100,50,200,0.5) !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# 수정구슬 버튼 (Streamlit 버튼으로 우측 하단)
-with st.sidebar:
-    st.markdown("---")
-    if st.button("🔮 타로카드 뽑기", use_container_width=True):
-        st.session_state.show_tarot = True
+# 타로카드 뽑기 트리거 버튼 (가운데 정렬)
+tcol1, tcol2, tcol3 = st.columns([1, 1.4, 1])
+with tcol2:
+    if st.button("🔮 타로카드 점 보기", use_container_width=True):
+        st.session_state.show_tarot = not st.session_state.get("show_tarot", False)
 
 # 타로카드 팝업
 if st.session_state.get("show_tarot", False):
     with st.expander("🔮 타로카드 점술 - 카드를 선택하세요", expanded=True):
         concern = st.text_input("✨ 오늘의 고민을 입력하세요", placeholder="예: 오늘 하루 운세가 궁금해요...")
 
-        st.markdown("<p style='color:#cc99ff; text-align:center; font-size:0.9rem;'>🃏 카드를 클릭해서 뽑으세요!</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#cc99ff; text-align:center; font-size:0.95rem; margin-top:10px;'>🃏 마음이 끌리는 카드를 클릭하세요</p>", unsafe_allow_html=True)
 
-        # 카드 섞기 (뒤집힌 카드 표시)
-        cols = st.columns(7)
-        selected_card = None
-        for i, col in enumerate(cols):
-            with col:
-                if st.button("🂠", key=f"card_{i}", help=f"카드 {i+1}번"):
-                    selected_card = random.choice(TAROT_CARDS)
-                    st.session_state.selected_tarot = selected_card
-                    st.session_state.tarot_concern = concern
+        # 카드 펼치기 (2줄 x 6장 = 12장)
+        card_faces = ["🌜", "✦", "☾", "✶", "🔮", "⭐", "☽", "✷", "🌟", "✵", "☄", "✺"]
+        for row in range(2):
+            cols = st.columns(6)
+            for j, col in enumerate(cols):
+                idx = row * 6 + j
+                with col:
+                    if st.button(card_faces[idx], key=f"card_{idx}", use_container_width=True):
+                        st.session_state.selected_tarot = random.choice(TAROT_CARDS)
+                        st.session_state.tarot_concern = concern
 
         # 선택된 카드 결과 표시
         if st.session_state.get("selected_tarot") and st.session_state.get("tarot_concern"):
@@ -353,9 +351,10 @@ if st.session_state.get("show_tarot", False):
                 card_name, direction, meaning, reading = get_tarot_reading(card, concern_text)
 
             st.markdown(f"""
-            <div style='background:rgba(40,10,80,0.8); border:1px solid rgba(180,100,255,0.5);
-            border-radius:15px; padding:20px; margin-top:10px;'>
-                <h3 style='color:#dd99ff; text-align:center;'>{card_name}</h3>
+            <div style='background:linear-gradient(160deg, rgba(60,20,110,0.9), rgba(20,8,50,0.9));
+            border:1px solid rgba(180,100,255,0.5); border-radius:18px; padding:24px; margin-top:16px;
+            box-shadow:0 0 25px rgba(150,90,255,0.4);'>
+                <h3 style='color:#dd99ff; text-align:center; text-shadow:0 0 12px rgba(200,120,255,0.7);'>{card_name}</h3>
                 <p style='color:#bb77ff; text-align:center;'>{direction} | {meaning}</p>
                 <hr style='border-color:rgba(180,100,255,0.3);'>
                 <p style='color:#e8d8ff; line-height:1.8;'>{reading}</p>
