@@ -3,6 +3,8 @@ from openai import OpenAI
 from datetime import datetime
 import pytz
 import io
+import random
+import speech_recognition as sr
 from audio_recorder_streamlit import audio_recorder
 
 # =============================================
@@ -241,6 +243,134 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# =============================================
+# 🔮 타로카드 데이터
+# =============================================
+TAROT_CARDS = [
+    {"name": "🌟 바보 (The Fool)", "upright": "새로운 시작, 자유로운 정신, 모험", "reverse": "무모함, 경솔함, 위험"},
+    {"name": "🪄 마법사 (The Magician)", "upright": "의지력, 창조력, 집중", "reverse": "속임수, 재능 낭비"},
+    {"name": "🌙 여사제 (The High Priestess)", "upright": "직관, 신비, 내면의 지식", "reverse": "비밀, 억압된 감정"},
+    {"name": "🌸 여황제 (The Empress)", "upright": "풍요, 모성, 창조성", "reverse": "의존성, 창의력 부족"},
+    {"name": "👑 황제 (The Emperor)", "upright": "권위, 안정, 리더십", "reverse": "지배욕, 경직성"},
+    {"name": "🙏 교황 (The Hierophant)", "upright": "전통, 신앙, 조언", "reverse": "고집, 규칙에 얽매임"},
+    {"name": "💑 연인 (The Lovers)", "upright": "사랑, 선택, 조화", "reverse": "불균형, 잘못된 선택"},
+    {"name": "🏆 전차 (The Chariot)", "upright": "승리, 의지력, 극복", "reverse": "방향 상실, 통제력 부족"},
+    {"name": "💪 힘 (Strength)", "upright": "용기, 인내, 내면의 힘", "reverse": "나약함, 자기 의심"},
+    {"name": "🏮 은둔자 (The Hermit)", "upright": "내면 탐구, 지혜, 고독", "reverse": "고립, 외로움"},
+    {"name": "☸️ 운명의 수레바퀴 (Wheel of Fortune)", "upright": "행운, 변화, 전환점", "reverse": "불운, 저항"},
+    {"name": "⚖️ 정의 (Justice)", "upright": "공정함, 진실, 균형", "reverse": "불공평, 편견"},
+    {"name": "🙃 매달린 사람 (The Hanged Man)", "upright": "희생, 새로운 관점, 기다림", "reverse": "순교, 지연"},
+    {"name": "💀 죽음 (Death)", "upright": "변화, 끝과 시작, 전환", "reverse": "저항, 변화 거부"},
+    {"name": "⚗️ 절제 (Temperance)", "upright": "균형, 인내, 조화", "reverse": "불균형, 과잉"},
+    {"name": "😈 악마 (The Devil)", "upright": "속박, 집착, 욕망", "reverse": "해방, 속박에서 벗어남"},
+    {"name": "🗼 탑 (The Tower)", "upright": "급격한 변화, 혼란, 계시", "reverse": "재난 회피, 두려움"},
+    {"name": "⭐ 별 (The Star)", "upright": "희망, 영감, 평화", "reverse": "절망, 믿음 부족"},
+    {"name": "🌕 달 (The Moon)", "upright": "환상, 두려움, 무의식", "reverse": "혼란, 오해"},
+    {"name": "☀️ 태양 (The Sun)", "upright": "기쁨, 성공, 활력", "reverse": "슬픔, 비현실"},
+    {"name": "🎺 심판 (Judgement)", "upright": "부활, 반성, 내면의 부름", "reverse": "자기 의심, 후회"},
+    {"name": "🌍 세계 (The World)", "upright": "완성, 통합, 성취", "reverse": "미완성, 지연"},
+]
+
+def get_tarot_reading(card, concern):
+    """타로카드 AI 해석"""
+    is_reversed = random.choice([True, False])
+    meaning = card["reverse"] if is_reversed else card["upright"]
+    direction = "역방향 🔄" if is_reversed else "정방향 ✨"
+
+    prompt = f"""
+    타로카드 '{card["name"]}'이 {direction}으로 나왔습니다.
+    카드 의미: {meaning}
+    사용자 고민: {concern}
+
+    이 카드를 바탕으로 따뜻하고 신비로운 분위기로 3-4문장 해석해주세요.
+    한국어로 답변해주세요.
+    """
+    response = client.chat.completions.create(
+        model=deploymentname,
+        messages=[
+            {"role": "system", "content": "당신은 신비로운 타로카드 점술사입니다. 따뜻하고 신비로운 분위기로 해석해주세요."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return card["name"], direction, meaning, response.choices[0].message.content
+
+# =============================================
+# 🔮 수정구슬 버튼 (우측 하단 고정)
+# =============================================
+st.markdown("""
+<style>
+    .tarot-btn {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, #ff99ff, #6633cc, #001133);
+        box-shadow: 0 0 15px rgba(180,100,255,0.7), 0 0 30px rgba(180,100,255,0.4);
+        cursor: pointer;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        animation: orbPulse 3s ease-in-out infinite;
+        border: 2px solid rgba(200,150,255,0.5);
+    }
+    @keyframes orbPulse {
+        0%   { box-shadow: 0 0 15px rgba(180,100,255,0.7), 0 0 30px rgba(180,100,255,0.4); }
+        50%  { box-shadow: 0 0 25px rgba(220,150,255,1.0), 0 0 50px rgba(180,100,255,0.6), 0 0 80px rgba(150,80,255,0.3); }
+        100% { box-shadow: 0 0 15px rgba(180,100,255,0.7), 0 0 30px rgba(180,100,255,0.4); }
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# 수정구슬 버튼 (Streamlit 버튼으로 우측 하단)
+with st.sidebar:
+    st.markdown("---")
+    if st.button("🔮 타로카드 뽑기", use_container_width=True):
+        st.session_state.show_tarot = True
+
+# 타로카드 팝업
+if st.session_state.get("show_tarot", False):
+    with st.expander("🔮 타로카드 점술 - 카드를 선택하세요", expanded=True):
+        concern = st.text_input("✨ 오늘의 고민을 입력하세요", placeholder="예: 오늘 하루 운세가 궁금해요...")
+
+        st.markdown("<p style='color:#cc99ff; text-align:center; font-size:0.9rem;'>🃏 카드를 클릭해서 뽑으세요!</p>", unsafe_allow_html=True)
+
+        # 카드 섞기 (뒤집힌 카드 표시)
+        cols = st.columns(7)
+        selected_card = None
+        for i, col in enumerate(cols):
+            with col:
+                if st.button("🂠", key=f"card_{i}", help=f"카드 {i+1}번"):
+                    selected_card = random.choice(TAROT_CARDS)
+                    st.session_state.selected_tarot = selected_card
+                    st.session_state.tarot_concern = concern
+
+        # 선택된 카드 결과 표시
+        if st.session_state.get("selected_tarot") and st.session_state.get("tarot_concern"):
+            card = st.session_state.selected_tarot
+            concern_text = st.session_state.tarot_concern
+            with st.spinner("🔮 카드를 해석하는 중..."):
+                card_name, direction, meaning, reading = get_tarot_reading(card, concern_text)
+
+            st.markdown(f"""
+            <div style='background:rgba(40,10,80,0.8); border:1px solid rgba(180,100,255,0.5);
+            border-radius:15px; padding:20px; margin-top:10px;'>
+                <h3 style='color:#dd99ff; text-align:center;'>{card_name}</h3>
+                <p style='color:#bb77ff; text-align:center;'>{direction} | {meaning}</p>
+                <hr style='border-color:rgba(180,100,255,0.3);'>
+                <p style='color:#e8d8ff; line-height:1.8;'>{reading}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        if st.button("✖ 닫기", key="close_tarot"):
+            st.session_state.show_tarot = False
+            st.session_state.selected_tarot = None
+            st.session_state.tarot_concern = None
+            st.rerun()
+
 # 대화 기록 초기화 + 첫 인사말
 if "messages" not in st.session_state:
     date_str2, time_str2 = get_current_time()
@@ -271,15 +401,19 @@ with col2:
     )
 
 if audio_bytes:
-    # Whisper로 음성 → 텍스트 변환
+    # Google STT로 음성 → 텍스트 변환 (무료)
+    recognizer = sr.Recognizer()
     audio_file = io.BytesIO(audio_bytes)
-    audio_file.name = "audio.wav"
-    transcript = client.audio.transcriptions.create(
-        model="whisper-1",
-        file=audio_file,
-        language="ko"
-    )
-    voice_prompt = transcript.text
+    with sr.AudioFile(audio_file) as source:
+        audio_data = recognizer.record(source)
+    try:
+        voice_prompt = recognizer.recognize_google(audio_data, language="ko-KR")
+    except sr.UnknownValueError:
+        voice_prompt = None
+        st.warning("음성을 인식하지 못했어요. 다시 시도해주세요! 🎤")
+    except sr.RequestError:
+        voice_prompt = None
+        st.error("음성 인식 서비스에 연결할 수 없어요.")
     if voice_prompt:
         with st.chat_message("user"):
             st.write(f"🎤 {voice_prompt}")
