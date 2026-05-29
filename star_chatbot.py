@@ -2,6 +2,8 @@ import streamlit as st
 from openai import OpenAI
 from datetime import datetime
 import pytz
+import io
+from audio_recorder_streamlit import audio_recorder
 
 # =============================================
 # 🎨 페이지 설정
@@ -254,7 +256,42 @@ for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
 
-# 입력창
+# =============================================
+# 🎤 음성 입력
+# =============================================
+st.markdown("<div style='text-align:center; padding: 10px 0 5px 0; color:#7788bb;'>🎤 마이크로 질문하기</div>", unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    audio_bytes = audio_recorder(
+        text="",
+        recording_color="#4466ff",
+        neutral_color="#334488",
+        icon_size="2x"
+    )
+
+if audio_bytes:
+    # Whisper로 음성 → 텍스트 변환
+    audio_file = io.BytesIO(audio_bytes)
+    audio_file.name = "audio.wav"
+    transcript = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio_file,
+        language="ko"
+    )
+    voice_prompt = transcript.text
+    if voice_prompt:
+        with st.chat_message("user"):
+            st.write(f"🎤 {voice_prompt}")
+        st.session_state.messages.append({"role": "user", "content": voice_prompt})
+
+        with st.chat_message("assistant"):
+            with st.spinner("🔭 별자리를 탐색하는 중..."):
+                answer = ask(voice_prompt)
+            st.write(answer)
+        st.session_state.messages.append({"role": "assistant", "content": answer})
+
+# 텍스트 입력창
 if prompt := st.chat_input("🌟 별자리에 대해 무엇이든 물어보세요..."):
     with st.chat_message("user"):
         st.write(prompt)
