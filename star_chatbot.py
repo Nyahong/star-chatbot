@@ -68,8 +68,19 @@ st.markdown("""
     /* 입력창 배경 */
     [data-testid="stChatInputContainer"] {
         background: rgba(10, 20, 60, 0.8) !important;
-        border: 1px solid rgba(80, 120, 255, 0.5) !important;
+        border: 1.5px solid rgba(80, 140, 255, 0.8) !important;
         border-radius: 25px !important;
+        box-shadow: 0 0 10px rgba(60, 120, 255, 0.5),
+                    0 0 20px rgba(60, 120, 255, 0.3),
+                    0 0 40px rgba(60, 120, 255, 0.15) !important;
+        animation: glowPulse 2.5s ease-in-out infinite !important;
+    }
+
+    /* 입력창 글로우 애니메이션 */
+    @keyframes glowPulse {
+        0%   { box-shadow: 0 0 8px rgba(60,120,255,0.4), 0 0 20px rgba(60,120,255,0.2); }
+        50%  { box-shadow: 0 0 16px rgba(80,160,255,0.8), 0 0 35px rgba(80,160,255,0.4), 0 0 60px rgba(80,160,255,0.2); }
+        100% { box-shadow: 0 0 8px rgba(60,120,255,0.4), 0 0 20px rgba(60,120,255,0.2); }
     }
 
     /* 입력창 텍스트 */
