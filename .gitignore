@@ -1,0 +1,2 @@
+# 키값 파일 GitHub에 올리지 않기
+.streamlit/secrets.toml
