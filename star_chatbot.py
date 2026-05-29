@@ -243,29 +243,32 @@ st.markdown("""
 # =============================================
 # 🔮 타로카드 데이터
 # =============================================
+# 실제 라이더-웨이트(Rider-Waite-Smith, 1909, 퍼블릭 도메인) 메이저 아르카나 22장
+# 카드 이미지는 위키미디어 공용(Wikimedia Commons)에서 제공
+_W = "https://upload.wikimedia.org/wikipedia/commons/thumb/{}/RWS_Tarot_{}.jpg/330px-RWS_Tarot_{}.jpg"
 TAROT_CARDS = [
-    {"name": "🌟 바보 (The Fool)", "upright": "새로운 시작, 자유로운 정신, 모험", "reverse": "무모함, 경솔함, 위험"},
-    {"name": "🪄 마법사 (The Magician)", "upright": "의지력, 창조력, 집중", "reverse": "속임수, 재능 낭비"},
-    {"name": "🌙 여사제 (The High Priestess)", "upright": "직관, 신비, 내면의 지식", "reverse": "비밀, 억압된 감정"},
-    {"name": "🌸 여황제 (The Empress)", "upright": "풍요, 모성, 창조성", "reverse": "의존성, 창의력 부족"},
-    {"name": "👑 황제 (The Emperor)", "upright": "권위, 안정, 리더십", "reverse": "지배욕, 경직성"},
-    {"name": "🙏 교황 (The Hierophant)", "upright": "전통, 신앙, 조언", "reverse": "고집, 규칙에 얽매임"},
-    {"name": "💑 연인 (The Lovers)", "upright": "사랑, 선택, 조화", "reverse": "불균형, 잘못된 선택"},
-    {"name": "🏆 전차 (The Chariot)", "upright": "승리, 의지력, 극복", "reverse": "방향 상실, 통제력 부족"},
-    {"name": "💪 힘 (Strength)", "upright": "용기, 인내, 내면의 힘", "reverse": "나약함, 자기 의심"},
-    {"name": "🏮 은둔자 (The Hermit)", "upright": "내면 탐구, 지혜, 고독", "reverse": "고립, 외로움"},
-    {"name": "☸️ 운명의 수레바퀴 (Wheel of Fortune)", "upright": "행운, 변화, 전환점", "reverse": "불운, 저항"},
-    {"name": "⚖️ 정의 (Justice)", "upright": "공정함, 진실, 균형", "reverse": "불공평, 편견"},
-    {"name": "🙃 매달린 사람 (The Hanged Man)", "upright": "희생, 새로운 관점, 기다림", "reverse": "순교, 지연"},
-    {"name": "💀 죽음 (Death)", "upright": "변화, 끝과 시작, 전환", "reverse": "저항, 변화 거부"},
-    {"name": "⚗️ 절제 (Temperance)", "upright": "균형, 인내, 조화", "reverse": "불균형, 과잉"},
-    {"name": "😈 악마 (The Devil)", "upright": "속박, 집착, 욕망", "reverse": "해방, 속박에서 벗어남"},
-    {"name": "🗼 탑 (The Tower)", "upright": "급격한 변화, 혼란, 계시", "reverse": "재난 회피, 두려움"},
-    {"name": "⭐ 별 (The Star)", "upright": "희망, 영감, 평화", "reverse": "절망, 믿음 부족"},
-    {"name": "🌕 달 (The Moon)", "upright": "환상, 두려움, 무의식", "reverse": "혼란, 오해"},
-    {"name": "☀️ 태양 (The Sun)", "upright": "기쁨, 성공, 활력", "reverse": "슬픔, 비현실"},
-    {"name": "🎺 심판 (Judgement)", "upright": "부활, 반성, 내면의 부름", "reverse": "자기 의심, 후회"},
-    {"name": "🌍 세계 (The World)", "upright": "완성, 통합, 성취", "reverse": "미완성, 지연"},
+    {"name": "🌟 바보 (The Fool)", "upright": "새로운 시작, 자유로운 정신, 모험", "reverse": "무모함, 경솔함, 위험", "img": _W.format("9/90", "00_Fool", "00_Fool")},
+    {"name": "🪄 마법사 (The Magician)", "upright": "의지력, 창조력, 집중", "reverse": "속임수, 재능 낭비", "img": _W.format("d/de", "01_Magician", "01_Magician")},
+    {"name": "🌙 여사제 (The High Priestess)", "upright": "직관, 신비, 내면의 지식", "reverse": "비밀, 억압된 감정", "img": _W.format("8/88", "02_High_Priestess", "02_High_Priestess")},
+    {"name": "🌸 여황제 (The Empress)", "upright": "풍요, 모성, 창조성", "reverse": "의존성, 창의력 부족", "img": _W.format("d/d2", "03_Empress", "03_Empress")},
+    {"name": "👑 황제 (The Emperor)", "upright": "권위, 안정, 리더십", "reverse": "지배욕, 경직성", "img": _W.format("c/c3", "04_Emperor", "04_Emperor")},
+    {"name": "🙏 교황 (The Hierophant)", "upright": "전통, 신앙, 조언", "reverse": "고집, 규칙에 얽매임", "img": _W.format("8/8d", "05_Hierophant", "05_Hierophant")},
+    {"name": "💑 연인 (The Lovers)", "upright": "사랑, 선택, 조화", "reverse": "불균형, 잘못된 선택", "img": _W.format("d/db", "06_Lovers", "06_Lovers")},
+    {"name": "🏆 전차 (The Chariot)", "upright": "승리, 의지력, 극복", "reverse": "방향 상실, 통제력 부족", "img": _W.format("9/9b", "07_Chariot", "07_Chariot")},
+    {"name": "💪 힘 (Strength)", "upright": "용기, 인내, 내면의 힘", "reverse": "나약함, 자기 의심", "img": _W.format("f/f5", "08_Strength", "08_Strength")},
+    {"name": "🏮 은둔자 (The Hermit)", "upright": "내면 탐구, 지혜, 고독", "reverse": "고립, 외로움", "img": _W.format("4/4d", "09_Hermit", "09_Hermit")},
+    {"name": "☸️ 운명의 수레바퀴 (Wheel of Fortune)", "upright": "행운, 변화, 전환점", "reverse": "불운, 저항", "img": _W.format("3/3c", "10_Wheel_of_Fortune", "10_Wheel_of_Fortune")},
+    {"name": "⚖️ 정의 (Justice)", "upright": "공정함, 진실, 균형", "reverse": "불공평, 편견", "img": _W.format("e/e0", "11_Justice", "11_Justice")},
+    {"name": "🙃 매달린 사람 (The Hanged Man)", "upright": "희생, 새로운 관점, 기다림", "reverse": "순교, 지연", "img": _W.format("2/2b", "12_Hanged_Man", "12_Hanged_Man")},
+    {"name": "💀 죽음 (Death)", "upright": "변화, 끝과 시작, 전환", "reverse": "저항, 변화 거부", "img": _W.format("d/d7", "13_Death", "13_Death")},
+    {"name": "⚗️ 절제 (Temperance)", "upright": "균형, 인내, 조화", "reverse": "불균형, 과잉", "img": _W.format("f/f8", "14_Temperance", "14_Temperance")},
+    {"name": "😈 악마 (The Devil)", "upright": "속박, 집착, 욕망", "reverse": "해방, 속박에서 벗어남", "img": _W.format("5/55", "15_Devil", "15_Devil")},
+    {"name": "🗼 탑 (The Tower)", "upright": "급격한 변화, 혼란, 계시", "reverse": "재난 회피, 두려움", "img": _W.format("5/53", "16_Tower", "16_Tower")},
+    {"name": "⭐ 별 (The Star)", "upright": "희망, 영감, 평화", "reverse": "절망, 믿음 부족", "img": _W.format("d/db", "17_Star", "17_Star")},
+    {"name": "🌕 달 (The Moon)", "upright": "환상, 두려움, 무의식", "reverse": "혼란, 오해", "img": _W.format("7/7f", "18_Moon", "18_Moon")},
+    {"name": "☀️ 태양 (The Sun)", "upright": "기쁨, 성공, 활력", "reverse": "슬픔, 비현실", "img": _W.format("1/17", "19_Sun", "19_Sun")},
+    {"name": "🎺 심판 (Judgement)", "upright": "부활, 반성, 내면의 부름", "reverse": "자기 의심, 후회", "img": _W.format("d/dd", "20_Judgement", "20_Judgement")},
+    {"name": "🌍 세계 (The World)", "upright": "완성, 통합, 성취", "reverse": "미완성, 지연", "img": _W.format("f/ff", "21_World", "21_World")},
 ]
 
 def get_tarot_reading(card, concern):
@@ -350,14 +353,19 @@ if st.session_state.get("show_tarot", False):
             with st.spinner("🔮 카드를 해석하는 중..."):
                 card_name, direction, meaning, reading = get_tarot_reading(card, concern_text)
 
+            is_rev = "역방향" in direction
+            rotate = "transform:rotate(180deg);" if is_rev else ""
+
             st.markdown(f"""
             <div style='background:linear-gradient(160deg, rgba(60,20,110,0.9), rgba(20,8,50,0.9));
             border:1px solid rgba(180,100,255,0.5); border-radius:18px; padding:24px; margin-top:16px;
-            box-shadow:0 0 25px rgba(150,90,255,0.4);'>
-                <h3 style='color:#dd99ff; text-align:center; text-shadow:0 0 12px rgba(200,120,255,0.7);'>{card_name}</h3>
-                <p style='color:#bb77ff; text-align:center;'>{direction} | {meaning}</p>
+            box-shadow:0 0 25px rgba(150,90,255,0.4); text-align:center;'>
+                <h3 style='color:#dd99ff; text-shadow:0 0 12px rgba(200,120,255,0.7);'>{card_name}</h3>
+                <img src='{card["img"]}' style='width:180px; border-radius:10px; margin:10px auto;
+                box-shadow:0 0 20px rgba(180,120,255,0.6); {rotate}'>
+                <p style='color:#bb77ff;'>{direction} | {meaning}</p>
                 <hr style='border-color:rgba(180,100,255,0.3);'>
-                <p style='color:#e8d8ff; line-height:1.8;'>{reading}</p>
+                <p style='color:#e8d8ff; line-height:1.8; text-align:left;'>{reading}</p>
             </div>
             """, unsafe_allow_html=True)
 
